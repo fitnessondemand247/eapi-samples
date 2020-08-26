@@ -1,4 +1,4 @@
-package com.fod.eapi.poc;
+package com.sample.eapi;
 
 public class Config {
     // Primary Brightcove Account Configuration as well as Google Analytics sent back to FitnessOnDemand

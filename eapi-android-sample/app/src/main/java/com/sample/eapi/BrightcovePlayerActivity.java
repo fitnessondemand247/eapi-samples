@@ -1,4 +1,4 @@
-package com.fod.eapi.poc;
+package com.sample.eapi;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

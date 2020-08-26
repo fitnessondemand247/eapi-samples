@@ -1,4 +1,4 @@
-package com.fod.eapi.poc;
+package com.sample.eapi;
 
 public class AnalyticsUtils {
 
