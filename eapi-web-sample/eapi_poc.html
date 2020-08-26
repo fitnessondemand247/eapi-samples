@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body onload="authenticate()">
+    <h1>
+        Basic HTML/JS Brightcove player example
+    </h1>   
+ 
+    <h2>Full Video</h2>
+    <video id="video-player"
+       data-account="{your brightcove account id}"
+       data-player="{your brightcove player id}"
+       data-embed="default"
+       controls=""
+       data-application-id=""
+       class="video-js"
+       controls
+       height="360"
+       width="640"></video>
+  
+    <h2>Preview Video</h2>
+    <video id="preview-video-player"
+       data-account="{your brightcove account id}"
+       data-player="{your brightcove player id}"
+       data-embed="default"
+       controls=""
+       data-application-id=""
+       class="video-js"
+       controls
+       height="360"
+       width="640"></video>
+ 
+    <!-- Script Here -->
+    <script src="https://players.brightcove.net/{your brightcove account id}/{your brightcove player id}/index.min.js"></script>
+    <script type="text/javascript">
+      authenticate = () =>{
+        var access_token = "";
+        var videoObject = "";
+        var videoTitle = "";
+ 
+        var myPlayer;
+        var previewPlayer;
+        var isBillablePlay = false;
+        var isPlayInitiated = false;
+ 
+        var data = new FormData();
+        data.append("grant_type", "client_credentials");
+        data.append("scope", "fodeapi");
+        data.append("client_id", "{your eapi client id}");
+        data.append("client_secret", "{your eapi client secret}");
+  
+        let settings = {
+          "url": "https://auth.fod247.io/connect/token",
+          "method": "POST",
+          "processData": false,
+          "contentType": false,
+          "mimeType": "multipart/form-data",
+          "data": data
+        }
+  
+        $.ajax(settings).done(function (response) {
+          let data = $.parseJSON(response);
+          access_token = data.access_token;
+          // console.log("access_token",access_token);
+          getAllVideos();
+        });
+ 
+        getAllVideos = () =>{
+            let settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": "https://eapi.fod247.io/videos",
+            "method": "GET",
+            "headers": {
+                "Authorization": `Bearer ${access_token}`,
+                "cache-control": "no-cache"
+              }
+            }
+  
+          $.ajax(settings).done(function (response) {
+            // Play first video of the list
+            let videos = shuffle(response.Results);
+            videoObject=videos[0];
+            videoTitle = videoObject.Name;
+            launchPlayer(videoObject.ID);
+            // launch preview player
+            launchPreviewPlayer(videoObject.ID);
+          });
+        }
+  
+        let shuffle = (array) => {
+
+          let currentIndex = array.length;
+          let temporaryValue, randomIndex;
+
+          // While there remain elements to shuffle...
+          while (0 !== currentIndex) {
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+          }
+          return array;
+        };
+
+
+
+        // Initialize player
+        videojs.getPlayer('video-player').ready(function() {
+          myPlayer = this;
+          myPlayer.play();
+
+          // Playback error Following are standard errors
+          // MEDIA_ERR_ABORTED , MEDIA_ERR_NETWORK  , MEDIA_ERR_DECODE, MEDIA_ERR_SRC_NOT_SUPPORTED, MEDIA_ERR_ENCRYPTED, MEDIA_ERR_UNKNOWN
+          // Reference - https://player.support.brightcove.com/references/brightcove-player-error-reference.html
+          myPlayer.on("error", function(err) {
+            // myPlayer.error() will return a JSON object and return type and code
+            
+            let errType = myPlayer.error().type;
+            playerErrorLog(errType)
+          });
+
+          //  Play event
+          myPlayer.on('play', function(){
+            if(!isPlayInitiated){
+              isPlayInitiated = true;
+              gtag('event', 'Video Play Started', {
+                'event_category': 'Video',
+                'event_label': videoTitle,
+                'value': 0
+              })
+            }
+          })
+
+          // Playback Ended
+          myPlayer.on('ended', function(){
+            gtag('event', 'Video Play Finished', {
+              'event_category': 'Video',
+              'event_label': videoTitle,
+              'value': parseInt(myPlayer.currentTime(), 10)
+            })              
+          })      
+
+          // Billable playback
+          myPlayer.on("timeupdate", function() {
+            // isPlaying = true;
+            let elapsedTime = myPlayer.currentTime();
+            let duration = myPlayer.duration();
+            let crossDuration = 0.25*duration;
+
+            // Log GA Event when playback crossed 25%
+            if(elapsedTime >= crossDuration && isBillablePlay == false){
+              isBillablePlay = true
+              //  capture billable play once playback crosses 25% playback
+              gtag('event', 'Billable Play', {
+                'event_category': 'Video',
+                'event_label': videoTitle,
+                'value': parseInt(myPlayer.currentTime(), 10)
+              })  
+            }
+          })
+
+        });
+ 
+        // Initialize and launch preview player
+        videojs.getPlayer('preview-video-player').ready(function() {
+          previewPlayer = this;
+          previewPlayer.play();
+        });
+ 
+ 
+        // launch player for full Video
+        let launchPlayer = (videoId) => {
+            myPlayer.catalog.getVideo(`ref:${videoId}`, function(error, video) {
+              // Capture video load error
+              if(error != null){
+                playerErrorLog('Could not find video')
+              }
+              // Load the video object into the player
+              myPlayer.catalog.load(video);
+              myPlayer.play();
+            });
+        }
+ 
+        // launch player for preview video
+        let launchPreviewPlayer = (videoId) => {
+          previewPlayer.catalog.getVideo(`ref:p${videoId}`, function(error, video) {
+            // Load the video object into the player
+            previewPlayer.catalog.load(video);
+            previewPlayer.play();
+          });
+        }
+
+        // Error log to GA
+        let playerErrorLog = (errorLabel) => {
+          gtag('event', 'Video Error', {
+            'event_category': 'Video',
+            'event_label': 'Brightcove Web Player Error: '+errorLabel
+          })  
+        }
+
+      }
+    </script>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id={your eapi google analytics tracking id}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{your eapi google analytics tracking id}');
+    </script>
+
+  </body>
+</html>

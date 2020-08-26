@@ -1,0 +1,6 @@
+framework module Pods_EAPI_Sample {
+  umbrella header "Pods-EAPI_Sample-umbrella.h"
+
+  export *
+  module * { export * }
+}

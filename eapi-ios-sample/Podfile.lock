@@ -1,0 +1,21 @@
+PODS:
+  - Brightcove-Player-Core/dynamic (6.7.6)
+  - GoogleAnalytics (3.17.0)
+
+DEPENDENCIES:
+  - Brightcove-Player-Core/dynamic
+  - GoogleAnalytics (= 3.17.0)
+
+SPEC REPOS:
+  https://github.com/brightcove/BrightcoveSpecs.git:
+    - Brightcove-Player-Core
+  https://github.com/CocoaPods/Specs.git:
+    - GoogleAnalytics
+
+SPEC CHECKSUMS:
+  Brightcove-Player-Core: e2a94177d916d1abdba6a894c56fd977e19fc0c1
+  GoogleAnalytics: f42cc53a87a51fe94334821868d9c8481ff47a7b
+
+PODFILE CHECKSUM: 051566d39e709bac6a01c7118b46f4531cdb86ca
+
+COCOAPODS: 1.9.1

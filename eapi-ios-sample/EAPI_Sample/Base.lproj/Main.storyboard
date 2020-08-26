@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="OBI-Jz-ppu">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="pJv-F4-1Mj">
+            <objects>
+                <viewController id="OBI-Jz-ppu" customClass="ViewController" customModule="EAPI_POC" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="GV3-0g-QSw"/>
+                        <viewControllerLayoutGuide type="bottom" id="6Ue-oB-Vyg"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="oOd-S8-p9h">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CxG-7O-KZ9" userLabel="videoContainerView">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="862"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="CxG-7O-KZ9" firstAttribute="top" secondItem="oOd-S8-p9h" secondAttribute="top" id="IhM-x7-uIb"/>
+                            <constraint firstItem="CxG-7O-KZ9" firstAttribute="leading" secondItem="oOd-S8-p9h" secondAttribute="leading" id="QQi-fV-4Mn"/>
+                            <constraint firstItem="j2E-IK-YRU" firstAttribute="bottom" secondItem="CxG-7O-KZ9" secondAttribute="bottom" id="Tv6-P9-4uC"/>
+                            <constraint firstAttribute="trailing" secondItem="CxG-7O-KZ9" secondAttribute="trailing" id="kOS-rw-7nk"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="j2E-IK-YRU"/>
+                    </view>
+                    <connections>
+                        <outlet property="videoContainerView" destination="CxG-7O-KZ9" id="SEz-50-wkV"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="p6a-Ar-pBo" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="34" y="140"/>
+        </scene>
+    </scenes>
+</document>
